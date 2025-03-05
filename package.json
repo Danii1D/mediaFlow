@@ -1,0 +1,31 @@
+{
+  "name": "mediaflow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@tanstack/react-query": "^5.67.1",
+    "axios": "^1.8.1",
+    "framer-motion": "^12.4.10",
+    "gsap": "^3.12.7",
+    "next": "15.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-particles": "^2.12.2",
+    "react-spring": "^9.7.5",
+    "react-tilt": "^1.0.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.1"
+  }
+}
