@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import getDefoultPosterLink from '../helpers/PosterNotFound';
+import getDefoultPosterLink from '../../helpers/PosterNotFound';
 
 export async function GET() {
   const RAWG_API_KEY = process.env.RAWG_API_KEY;

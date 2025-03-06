@@ -1,48 +1,16 @@
+// pages/Home.jsx
 'use client';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import Particles from 'react-particles';
-import { Tilt } from 'react-tilt';
-import { useSpring, animated } from 'react-spring';
+import { useSpring } from 'react-spring';
 import { gsap } from 'gsap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFilm,
-  faMusic,
-  faGamepad,
-  faSun,
-  faMoon,
-  faStar,
-  faStarHalf,
-} from '@fortawesome/free-solid-svg-icons';
+import { faFilm, faMusic, faGamepad } from '@fortawesome/free-solid-svg-icons';
 import styles from './page.module.css';
 import axios from 'axios';
 
-const CategoriesEnum = {
-  movies: 'movies',
-  games: 'games',
-  music: 'music',
-};
-
-function getNavItemText(item) {
-  console.log('item', item);
-
-  if (!Object.values(CategoriesEnum).includes(item)) {
-    console.error('Invalid item value');
-    return null;
-  }
-
-  switch (item) {
-    case CategoriesEnum.games:
-      return 'Ігри';
-    case CategoriesEnum.music:
-      return 'Музика';
-    case CategoriesEnum.movies:
-      return 'Фільми';
-    default:
-      return null;
-  }
-}
+import { CategoriesEnum } from './helpers/constants';
+import Header from './components/header/Header';
+import Main from './components/main/Main';
 
 export default function Home() {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -52,7 +20,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState(CategoriesEnum.movies);
 
-  console.log('render', CategoriesEnum, category);
+  // console.log('render', CategoriesEnum, category);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,11 +64,7 @@ export default function Home() {
         });
       },
     });
-  }, [isDarkTheme]); // Зависит только от темы
-
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-  };
+  }, [isDarkTheme]);
 
   const springProps = useSpring({
     from: { opacity: 0, transform: 'translateY(20px)' },
@@ -108,66 +72,17 @@ export default function Home() {
     delay: 100,
   });
 
-  const getRatingStars = (rating) => {
-    if (!rating || isNaN(rating)) return null;
-    const fullStars = Math.floor(rating / 2);
-    const halfStar = rating % 2 >= 1 ? 0.5 : 0;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-    return (
-      <div className={styles.ratingStars}>
-        {Array(fullStars)
-          .fill()
-          .map((_, i) => (
-            <FontAwesomeIcon
-              key={`full-${i}`}
-              icon={faStar}
-              className={styles.fullStar}
-            />
-          ))}
-        {halfStar === 0.5 && (
-          <FontAwesomeIcon
-            key="half"
-            icon={faStarHalf}
-            className={styles.halfStar}
-          />
-        )}
-        {Array(emptyStars)
-          .fill()
-          .map((_, i) => (
-            <FontAwesomeIcon
-              key={`empty-${i}`}
-              icon={faStar}
-              className={styles.emptyStar}
-            />
-          ))}
-      </div>
-    );
-  };
-
   if (loading) {
     return <div className={styles.loading}>Завантаження...</div>;
   }
 
   const getCatalogItems = () => {
-    console.log('Current category:', category);
-    console.log('Movies data:', movies);
-    console.log('Music data:', music);
-    console.log('Games data:', games);
+    // console.log('Current category:', category);
+    // console.log('Movies data:', movies);
+    // console.log('Music data:', music);
+    // console.log('Games data:', games);
 
     switch (category) {
-      //! Проверка не нужна, так как по умолчанию всегда используются фильмы
-
-      // case 'movies':
-      //   return movies.map((movie, index) => ({
-      //     ...movie,
-      //     type: 'Фільм',
-      //     icon: faFilm,
-      //     key: movie.id || `movie-${index}`,
-      //     title: movie.title,
-      //     poster: movie.poster,
-      //     rating: movie.rating || 0,
-      //     overview: movie.overview || 'Опис відсутній',
-      //   }));
       case CategoriesEnum.music:
         return music.map((track, index) => ({
           ...track,
@@ -224,170 +139,13 @@ export default function Home() {
           },
         }}
       />
-      <header className={styles.header}>
-        <motion.div
-          className={styles.logoWrapper}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.1, type: 'spring' }}
-          whileHover={{ scale: 1.1, rotate: 5 }}
-        >
-          <Tilt
-            className={styles.tiltLogo}
-            options={{ max: 25, scale: 1.05, speed: 300 }}
-          >
-            <img
-              src={isDarkTheme ? '/logo-dark.png' : '/logo-light.png'}
-              alt="MediaFlow Logo"
-              className={styles.logo}
-              onError={(e) => console.log('Error loading logo:', e)}
-            />
-          </Tilt>
-        </motion.div>
-        <nav className={styles.nav}>
-          {Object.values(CategoriesEnum).map((item) => (
-            <motion.a
-              key={item}
-              href="#"
-              className={`${styles.navLink} ${
-                category == item ? styles.active : ''
-              }`}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-              whileHover={{
-                scale: 1.05,
-                color: isDarkTheme ? '#00D4FF' : '#FF6F61',
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                setCategory(item); // Устанавливаем категорию
-              }}
-            >
-              {getNavItemText(item) || item}
-            </motion.a>
-          ))}
-        </nav>
-
-        <motion.label
-          className={styles.themeToggle}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.3 }}
-        >
-          <input
-            type="checkbox"
-            checked={isDarkTheme}
-            onChange={toggleTheme}
-            className={styles.themeCheckbox}
-          />
-          <motion.span
-            className={`${styles.themeSlider} ${
-              isDarkTheme ? styles.darkSlider : styles.lightSlider
-            }`}
-            initial={{ x: -20 }}
-            animate={{ x: 0 }}
-            transition={{
-              type: 'spring',
-              stiffness: 300,
-              damping: 15,
-              duration: 0.3,
-            }}
-          >
-            <span className={styles.themeIcon}>
-              <FontAwesomeIcon icon={faSun} />
-            </span>
-            <span className={styles.themeIcon}>
-              <FontAwesomeIcon icon={faMoon} />
-            </span>
-          </motion.span>
-        </motion.label>
-      </header>
-      <main className={styles.main}>
-        <motion.input
-          type="text"
-          placeholder="Скажи, що хочеш — я знайду!"
-          className={styles.search}
-          initial={{ width: '30%', opacity: 0 }}
-          animate={{ width: '50%', opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.4, ease: 'easeOut' }}
-          whileFocus={{
-            width: '55%',
-            boxShadow: `0 0 20px ${isDarkTheme ? '#00D4FF' : '#FF6F61'}`,
-          }}
-          whileHover={{ scale: 1.02 }}
-        />
-        <div className={styles.results}>
-          <motion.h2
-            className={styles.sectionTitle}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.3 }}
-          >
-            Твій каталог
-          </motion.h2>
-          <motion.div
-            className={styles.catalog}
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.1 },
-              },
-            }}
-          >
-            {catalogItems.map((item) => (
-              <Tilt
-                key={item.key}
-                className={styles.tiltCard}
-                options={{ max: 15, scale: 1.02, speed: 200 }}
-              >
-                <motion.div
-                  className={styles.card}
-                  variants={{
-                    hidden: { opacity: 0, y: 50, scale: 0.9 },
-                    visible: { opacity: 1, y: 0, scale: 1 },
-                  }}
-                  whileHover={{
-                    scale: 1.08,
-                    rotate: 3,
-                    boxShadow: `0 15px 30px ${
-                      isDarkTheme
-                        ? 'rgba(0, 212, 255, 0.5)'
-                        : 'rgba(255, 111, 97, 0.5)'
-                    }`,
-                  }}
-                  transition={{ type: 'spring', stiffness: 200, duration: 0.3 }}
-                >
-                  <h3 className={styles.cardTitle}>{item.title}</h3>
-                  <div className={styles.ratingStars}>
-                    {getRatingStars(item.rating)}
-                  </div>
-                  <img
-                    className={
-                      item.type === 'Фільм'
-                        ? styles.poster
-                        : item.type === 'Музика'
-                        ? styles.musicPoster
-                        : styles.gamePoster
-                    }
-                    src={item.poster}
-                    alt={item.title}
-                    onError={(e) =>
-                      console.log(
-                        `Error loading ${item.type.toLowerCase()} poster:`,
-                        e
-                      )
-                    }
-                  />
-                </motion.div>
-              </Tilt>
-            ))}
-          </motion.div>
-        </div>
-      </main>
+      <Header
+        category={category}
+        setCategory={setCategory}
+        isDarkTheme={isDarkTheme}
+        setIsDarkTheme={setIsDarkTheme}
+      />
+      <Main catalogItems={catalogItems} isDarkTheme={isDarkTheme} />
     </div>
   );
 }

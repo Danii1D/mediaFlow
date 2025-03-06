@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import getDefoultPosterLink from '../helpers/PosterNotFound';
+import getDefoultPosterLink from '../../helpers/PosterNotFound';
 
 export async function GET() {
   const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
