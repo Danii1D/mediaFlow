@@ -4,7 +4,10 @@ import axios from 'axios';
 export async function GET() {
   const TMDB_API_KEY = process.env.TMDB_API_KEY;
   if (!TMDB_API_KEY) {
-    return NextResponse.json({ error: 'TMDB API key is missing' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'TMDB API key is missing' },
+      { status: 500 }
+    );
   }
 
   try {
@@ -22,7 +25,9 @@ export async function GET() {
         let overview = detailsResponse.data.overview || movie.overview;
         if (!overview || overview.includes('en')) {
           try {
-            const translateResponse = await axios.post('/api/translate', { text: overview || 'No description available' });
+            const translateResponse = await axios.post('/api/translate', {
+              text: overview || 'No description available',
+            });
             overview = translateResponse.data.translatedText;
           } catch (translateError) {
             console.error('Translation error for movie:', translateError);
@@ -46,6 +51,9 @@ export async function GET() {
       message: error.message,
       response: error.response?.data || error.response?.status,
     });
-    return NextResponse.json({ error: 'Failed to fetch movies from TMDB', details: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch movies from TMDB', details: error.message },
+      { status: 500 }
+    );
   }
 }
